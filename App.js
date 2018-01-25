@@ -53,7 +53,7 @@ export default class App extends Component<{}> {
         })
         .catch(error => {
           this.setState({
-            error, loading: false
+            error, loading: false, refreshing: false
           })
         })
 
@@ -88,6 +88,24 @@ export default class App extends Component<{}> {
     )
   }
 
+  handleRefresh =() => {
+    this.setState({
+      page: 1,
+      refreshing: true,
+      seed: this.state.seed + 1
+    }, () => {
+      this.makeRemoteRequest();
+    })
+  }
+
+  handleLoadMore = () => {
+    this.setState({
+      page: this.state.page + 1
+    }, () => {
+      this.makeRemoteRequest();
+    })
+  };
+
   render() {
     return (
       <List containerStyle={styles.ListStyle}>
@@ -106,6 +124,10 @@ export default class App extends Component<{}> {
           ItemSeparatorComponent={this.renderSeparator}
           ListHeaderComponent={this.renderHeader}
           ListFooterComponent={this.renderFooter}
+          refreshing={this.state.refreshing}
+          onRefresh={this.handleRefresh}
+          onEndReached={this.handleLoadMore}
+          onEndReachedThreshold={1}
         />
       </List>
     );
@@ -114,17 +136,6 @@ export default class App extends Component<{}> {
 
 const styles = StyleSheet.create({
   ListStyle: {
-    borderTopWidth: 0,
-    borderBottomWidth: 0
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+
+  }
 });
